@@ -99,7 +99,7 @@ export default function Dashboard() {
   };
 
   const updateApiKey = async (keyId) => {
-    if (!editName.trim()) {
+    if (!editKeyData.name.trim()) {
       toast.error('Please enter a key name');
       return;
     }
@@ -110,12 +110,14 @@ export default function Dashboard() {
       const response = await fetch(`/api/keys/${keyId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: editName }),
+        body: JSON.stringify({ 
+          name: editKeyData.name,
+          limit: editKeyData.limit 
+        }),
       });
-      const updatedKey = await response.json();
       
       setApiKeys(apiKeys.map(key => 
-        key.id === keyId ? { ...key, name: editName } : key
+        key.id === keyId ? { ...key, ...editKeyData } : key
       ));
       setEditingKey(null);
       toast.success('API key updated successfully');
