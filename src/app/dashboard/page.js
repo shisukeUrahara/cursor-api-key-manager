@@ -2,7 +2,11 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useTheme } from '@/context/ThemeContext';
-import { MoonIcon, SunIcon, EyeIcon, EyeSlashIcon, ClipboardDocumentIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
+import ApiKeyModal from '@/components/ApiKeyModal';
+import EditKeyModal from '@/components/EditKeyModal';
+import ApiKeysList from '@/components/ApiKeysList';
+import UsageCard from '@/components/UsageCard';
 
 const DUMMY_KEYS = [
   { 
@@ -13,7 +17,14 @@ const DUMMY_KEYS = [
     displayKey: 'tvly**********abc',
     limit: 1000 
   },
-  { id: 2, name: 'production', createdAt: '2024-01-20', key: 'tv1y-********************************', displayKey: 'tv1y-********************************', limit: 1000 },
+  { 
+    id: 2, 
+    name: 'production', 
+    createdAt: '2024-01-20', 
+    key: 'tv1y-********************************', 
+    displayKey: 'tv1y-********************************', 
+    limit: 1000 
+  },
 ];
 
 export default function Dashboard() {
@@ -142,236 +153,11 @@ export default function Dashboard() {
     toast.success('API key copied to clipboard');
   };
 
-  const KeyModal = () => (
-    <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50`}>
-      <div className={`${
-        theme === 'dark' ? 'bg-[#1A1A1A] text-white' : 'bg-white text-gray-900'
-      } rounded-lg p-6 w-[400px]`}>
-        <h2 className="text-xl font-semibold mb-4">Create a new API key</h2>
-        <p className="text-sm mb-4">Enter a name and limit for the new API key.</p>
-        
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Key Name — A unique name to identify this key
-            </label>
-            <input
-              type="text"
-              value={newKeyName}
-              onChange={(e) => setNewKeyName(e.target.value)}
-              className={`w-full rounded-md px-4 py-2 ${
-                theme === 'dark'
-                  ? 'bg-[#2A2A2A] border-gray-700 text-gray-200'
-                  : 'bg-gray-50 border-gray-300 text-gray-900'
-              } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
-              placeholder="Key Name"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Limit monthly usage*
-            </label>
-            <input
-              type="number"
-              value={keyLimit}
-              onChange={(e) => setKeyLimit(e.target.value)}
-              className={`w-full rounded-md px-4 py-2 ${
-                theme === 'dark'
-                  ? 'bg-[#2A2A2A] border-gray-700 text-gray-200'
-                  : 'bg-gray-50 border-gray-300 text-gray-900'
-              } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
-            />
-          </div>
-          
-          <p className="text-sm text-gray-500">
-            * If the combined usage of all your keys exceeds your plan's limit, all requests will be rejected.
-          </p>
-          
-          <div className="flex justify-end gap-3 mt-6">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className={`px-4 py-2 rounded-md ${
-                theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={createApiKey}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-            >
-              Create
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const EditKeyModal = () => (
-    <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50`}>
-      <div className={`${
-        theme === 'dark' ? 'bg-[#1A1A1A] text-white' : 'bg-white text-gray-900'
-      } rounded-lg p-6 w-[400px]`}>
-        <h2 className="text-xl font-semibold mb-4">Edit API key</h2>
-        <p className="text-sm mb-4">Enter a new limit for the API key.</p>
-        
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Key Name — A unique name to identify this key
-            </label>
-            <input
-              type="text"
-              value={editKeyData?.name || ''}
-              disabled
-              className={`w-full rounded-md px-4 py-2 ${
-                theme === 'dark'
-                  ? 'bg-[#2A2A2A] border-gray-700 text-gray-400'
-                  : 'bg-gray-50 border-gray-300 text-gray-500'
-              } border focus:outline-none cursor-not-allowed`}
-            />
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={canEditUsage}
-              onChange={(e) => setCanEditUsage(e.target.checked)}
-              className="rounded"
-            />
-            <label className="text-sm">Limit monthly usage*</label>
-          </div>
-
-          <input
-            type="number"
-            value={editKeyData?.limit || 1000}
-            onChange={(e) => setEditKeyData({
-              ...editKeyData,
-              limit: parseInt(e.target.value)
-            })}
-            disabled={!canEditUsage}
-            className={`w-full rounded-md px-4 py-2 ${
-              theme === 'dark'
-                ? 'bg-[#2A2A2A] border-gray-700 text-gray-200'
-                : 'bg-gray-50 border-gray-300 text-gray-900'
-            } border focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              !canEditUsage ? 'cursor-not-allowed opacity-50' : ''
-            }`}
-          />
-          
-          <p className="text-sm text-gray-500">
-            * If the combined usage of all your keys exceeds your plan's limit, all requests will be rejected.
-          </p>
-          
-          <div className="flex justify-end gap-3 mt-6">
-            <button
-              onClick={() => {
-                setEditModalOpen(false);
-                setCanEditUsage(false);
-              }}
-              className={`px-4 py-2 rounded-md ${
-                theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                updateApiKey(editKeyData.id);
-                setEditModalOpen(false);
-                setCanEditUsage(false);
-              }}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderApiKeysList = () => (
-    <div className={`rounded-lg overflow-hidden ${
-      theme === 'dark' ? 'bg-[#1A1A1A] border-gray-800' : 'bg-white border-gray-200'
-    } border`}>
-      {/* Table Header */}
-      <div className="grid grid-cols-4 gap-4 p-4 border-b border-gray-200 dark:border-gray-700 text-sm font-medium">
-        <div className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>NAME</div>
-        <div className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>USAGE</div>
-        <div className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>KEY</div>
-        <div className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>OPTIONS</div>
-      </div>
-
-      {/* Table Body */}
-      {apiKeys.map((key) => (
-        <div key={key.id} className="grid grid-cols-12 gap-4 p-4 items-center">
-          <div className="col-span-3">{key.name}</div>
-          <div className="col-span-2">0</div>
-          <div className="col-span-5 font-mono text-sm truncate">
-            {visibleKeys.has(key.id) ? key.key : key.displayKey}
-          </div>
-          <div className="col-span-2 flex gap-2">
-            <button
-              onClick={() => toggleKeyVisibility(key.id)}
-              className={`p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-              }`}
-              title={visibleKeys.has(key.id) ? "Hide API Key" : "Show API Key"}
-            >
-              {visibleKeys.has(key.id) ? (
-                <EyeSlashIcon className="w-5 h-5" />
-              ) : (
-                <EyeIcon className="w-5 h-5" />
-              )}
-            </button>
-
-            <button
-              onClick={() => copyToClipboard(key)}
-              className={`p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-              }`}
-              title="Copy API Key"
-            >
-              <ClipboardDocumentIcon className="w-5 h-5" />
-            </button>
-
-            <button
-              onClick={() => {
-                setEditKeyData(key);
-                setEditModalOpen(true);
-              }}
-              className={`p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-              }`}
-              title="Edit API Key Name"
-            >
-              <PencilIcon className="w-5 h-5" />
-            </button>
-
-            <button
-              onClick={() => deleteApiKey(key.id)}
-              className={`p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-              }`}
-              title="Delete API Key"
-            >
-              <TrashIcon className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
   return (
     <div className={`min-h-screen transition-colors duration-200 ${
       theme === 'dark' ? 'bg-[#111111] text-gray-100' : 'bg-gray-50 text-gray-900'
     }`}>
       <div className="max-w-4xl mx-auto p-8">
-        {/* Header with Theme Toggle */}
         <div className="flex justify-between items-center mb-8">
           <h1 className={`text-3xl font-bold ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -393,24 +179,8 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* API Usage Card */}
-        <div className={`mb-8 rounded-lg p-6 ${
-          theme === 'dark' 
-            ? 'bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-gray-800' 
-            : 'bg-gradient-to-r from-blue-100 to-purple-100'
-        }`}>
-          <p className="text-sm font-medium mb-2">CURRENT PLAN</p>
-          <h2 className="text-2xl font-bold mb-4">Developer</h2>
-          <div className="space-y-2">
-            <p className="text-sm">API Limit</p>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-              <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: '45%' }}></div>
-            </div>
-            <p className="text-sm">500/1,000 Requests</p>
-          </div>
-        </div>
+        <UsageCard />
 
-        {/* Create API Key Section */}
         <div className={`mb-8 rounded-lg p-6 ${
           theme === 'dark'
             ? 'bg-[#1A1A1A] border border-gray-800'
@@ -427,52 +197,46 @@ export default function Dashboard() {
               Generate Key
             </button>
           </div>
-          
-          {/* Show Modal when isModalOpen is true */}
-          {isModalOpen && <KeyModal />}
-          
-          {/* New Key Display */}
-          {showNewKey && newlyCreatedKey && (
-            <div className={`mt-4 p-4 rounded-md ${
-              theme === 'dark'
-                ? 'bg-[#2A2A2A] border-gray-700'
-                : 'bg-gray-50 border-gray-200'
-            } border`}>
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                    Your new API key:
-                  </p>
-                  <p className="font-mono text-sm mt-1 text-blue-500">
-                    {newlyCreatedKey}
-                  </p>
-                </div>
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(newlyCreatedKey);
-                    toast.success('API key copied to clipboard');
-                  }}
-                  className="text-blue-500 hover:text-blue-400"
-                >
-                  Copy
-                </button>
-              </div>
-              <p className="text-sm text-red-400 mt-2">
-                Make sure to copy your API key now. You won't be able to see it again!
-              </p>
-            </div>
-          )}
+
+          <ApiKeysList
+            apiKeys={apiKeys}
+            visibleKeys={visibleKeys}
+            toggleKeyVisibility={toggleKeyVisibility}
+            copyToClipboard={copyToClipboard}
+            onEdit={(key) => {
+              setEditKeyData(key);
+              setEditModalOpen(true);
+            }}
+            onDelete={deleteApiKey}
+          />
         </div>
 
-        {/* API Keys List */}
-        <div className="mt-6">
-          <h2 className={`text-xl font-semibold mb-4 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>Your API Keys</h2>
-          {renderApiKeysList()}
-        </div>
+        <ApiKeyModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={createApiKey}
+          newKeyName={newKeyName}
+          setNewKeyName={setNewKeyName}
+          keyLimit={keyLimit}
+          setKeyLimit={setKeyLimit}
+        />
 
-        {editModalOpen && <EditKeyModal />}
+        <EditKeyModal
+          isOpen={editModalOpen}
+          onClose={() => {
+            setEditModalOpen(false);
+            setCanEditUsage(false);
+          }}
+          onSave={() => {
+            updateApiKey(editKeyData.id);
+            setEditModalOpen(false);
+            setCanEditUsage(false);
+          }}
+          editKeyData={editKeyData}
+          setEditKeyData={setEditKeyData}
+          canEditUsage={canEditUsage}
+          setCanEditUsage={setCanEditUsage}
+        />
       </div>
     </div>
   );
