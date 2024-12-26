@@ -59,6 +59,12 @@ export default function Dashboard() {
     }
   };
 
+  const generateApiKey = () => {
+    // Generate a key of consistent length (23 characters)
+    const randomStr = Math.random().toString(36).substring(2, 12); // 10 chars
+    return `tvly${randomStr}${Date.now().toString(36).slice(-9)}`; // tvly + 10 chars + 9 chars = 23 total
+  };
+
   const createApiKey = async () => {
     if (!newKeyName.trim()) {
       toast.error('Please enter a key name');
@@ -67,15 +73,20 @@ export default function Dashboard() {
 
     try {
       setLoading(true);
+      const generatedKey = generateApiKey();
       const newKey = {
         id: Date.now(),
         name: newKeyName,
         createdAt: new Date().toISOString(),
-        key: `tv1y-${Math.random().toString(36).substring(2)}********************************`,
+        key: generatedKey,
+        displayKey: 'tvly********************', // Consistent hidden format
+        limit: keyLimit
       };
       
       setApiKeys([...apiKeys, newKey]);
       setNewlyCreatedKey(newKey.key);
+      // Add the new key's ID to visibleKeys set to show the plaintext version initially
+      setVisibleKeys(prev => new Set([...prev, newKey.id]));
       setShowNewKey(true);
       setNewKeyName('');
       setIsModalOpen(false);
