@@ -38,9 +38,9 @@ export default function ApiKeysList({
               title={visibleKeys.has(key.id) ? "Hide API Key" : "Show API Key"}
             >
               {visibleKeys.has(key.id) ? (
-                <EyeSlashIcon className="w-5 h-5" />
-              ) : (
                 <EyeIcon className="w-5 h-5" />
+              ) : (
+                <EyeSlashIcon className="w-5 h-5" />
               )}
             </button>
 

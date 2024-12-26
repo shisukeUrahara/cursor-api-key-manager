@@ -14,15 +14,15 @@ const DUMMY_KEYS = [
     name: 'default', 
     createdAt: '2024-01-15', 
     key: 'tvly1234bakjdgskahcisabc',
-    displayKey: 'tvly**********abc',
+    displayKey: 'tvly********************',
     limit: 1000 
   },
   { 
     id: 2, 
     name: 'production', 
     createdAt: '2024-01-20', 
-    key: 'tv1y-********************************', 
-    displayKey: 'tv1y-********************************', 
+    key: 'tvly5678xyzwpqrstuvmnop', 
+    displayKey: 'tvly********************', 
     limit: 1000 
   },
 ];
