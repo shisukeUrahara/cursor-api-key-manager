@@ -200,6 +200,17 @@ export default function Dashboard() {
     toast.success('API key copied to clipboard');
   };
 
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      window.location.href = '/login';
+    } catch (error) {
+      toast.error('Error logging out');
+      console.error(error);
+    }
+  };
+
   return (
     <div className={`min-h-screen transition-colors duration-200 ${
       theme === 'dark' ? 'bg-[#111111] text-gray-100' : 'bg-gray-50 text-gray-900'
@@ -210,20 +221,28 @@ export default function Dashboard() {
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>API Key Management</h1>
           
-          <button
-            onClick={toggleTheme}
-            className={`p-2 rounded-full ${
-              theme === 'dark' 
-                ? 'bg-gray-800 hover:bg-gray-700' 
-                : 'bg-white hover:bg-gray-100 shadow-sm'
-            }`}
-          >
-            {theme === 'dark' ? (
-              <SunIcon className="w-5 h-5 text-yellow-400" />
-            ) : (
-              <MoonIcon className="w-5 h-5 text-gray-600" />
-            )}
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+            >
+              Logout
+            </button>
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-full ${
+                theme === 'dark' 
+                  ? 'bg-gray-800 hover:bg-gray-700' 
+                  : 'bg-white hover:bg-gray-100 shadow-sm'
+              }`}
+            >
+              {theme === 'dark' ? (
+                <SunIcon className="w-5 h-5 text-yellow-400" />
+              ) : (
+                <MoonIcon className="w-5 h-5 text-gray-600" />
+              )}
+            </button>
+          </div>
         </div>
 
         <UsageCard />
