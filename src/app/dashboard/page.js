@@ -7,6 +7,9 @@ import ApiKeyModal from '@/components/ApiKeyModal';
 import EditKeyModal from '@/components/EditKeyModal';
 import ApiKeysList from '@/components/ApiKeysList';
 import UsageCard from '@/components/UsageCard';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/context/AuthContext';
+
 
 const DUMMY_KEYS = [
   { 
@@ -42,6 +45,13 @@ export default function Dashboard() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editKeyData, setEditKeyData] = useState(null);
   const [canEditUsage, setCanEditUsage] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) {
+      window.location.href = '/login';
+    }
+  }, [user]);
 
   useEffect(() => {
     fetchApiKeys();
@@ -50,10 +60,16 @@ export default function Dashboard() {
   const fetchApiKeys = async () => {
     try {
       setLoading(true);
-      // Using dummy data instead of API call
-      setApiKeys(DUMMY_KEYS);
+      const { data, error } = await supabase
+        .from('api_keys')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setApiKeys(data);
     } catch (error) {
       toast.error('Failed to fetch API keys');
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -62,7 +78,7 @@ export default function Dashboard() {
   const generateApiKey = () => {
     // Generate a key of consistent length (23 characters)
     const randomStr = Math.random().toString(36).substring(2, 12); // 10 chars
-    return `tvly${randomStr}${Date.now().toString(36).slice(-9)}`; // tvly + 10 chars + 9 chars = 23 total
+    return `shke${randomStr}${Date.now().toString(36).slice(-9)}`; // tvly + 10 chars + 9 chars = 23 total
   };
 
   const createApiKey = async () => {
@@ -73,26 +89,36 @@ export default function Dashboard() {
 
     try {
       setLoading(true);
+      if (!user) throw new Error('Not authenticated');
+
       const generatedKey = generateApiKey();
-      const newKey = {
-        id: Date.now(),
-        name: newKeyName,
-        createdAt: new Date().toISOString(),
-        key: generatedKey,
-        displayKey: 'tvly********************', // Consistent hidden format
-        limit: keyLimit
-      };
       
-      setApiKeys([...apiKeys, newKey]);
-      setNewlyCreatedKey(newKey.key);
-      // Add the new key's ID to visibleKeys set to show the plaintext version initially
-      setVisibleKeys(prev => new Set([...prev, newKey.id]));
+      const newKey = {
+        name: newKeyName,
+        key: generatedKey,
+        display_key: 'shke********************',
+        "limit": keyLimit,
+        user_id: user.id
+      };
+
+      const { data, error } = await supabase
+        .from('api_keys')
+        .insert([newKey])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setApiKeys([data, ...apiKeys]);
+      setNewlyCreatedKey(data.key);
+      setVisibleKeys(prev => new Set([...prev, data.id]));
       setShowNewKey(true);
       setNewKeyName('');
       setIsModalOpen(false);
       toast.success('API key created successfully');
     } catch (error) {
       toast.error('Failed to create API key');
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -106,23 +132,27 @@ export default function Dashboard() {
 
     try {
       setLoading(true);
-      // TODO: Replace with your actual API endpoint
-      const response = await fetch(`/api/keys/${keyId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+      const { data, error } = await supabase
+        .from('api_keys')
+        .update({ 
           name: editKeyData.name,
-          limit: editKeyData.limit 
-        }),
-      });
-      
+          "limit": editKeyData.limit
+        })
+        .eq('id', keyId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
       setApiKeys(apiKeys.map(key => 
-        key.id === keyId ? { ...key, ...editKeyData } : key
+        key.id === keyId ? data : key
       ));
       setEditingKey(null);
+      setEditModalOpen(false);
       toast.success('API key updated successfully');
     } catch (error) {
       toast.error('Failed to update API key');
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -135,15 +165,18 @@ export default function Dashboard() {
 
     try {
       setLoading(true);
-      // TODO: Replace with your actual API endpoint
-      await fetch(`/api/keys/${keyId}`, {
-        method: 'DELETE',
-      });
-      
+      const { error } = await supabase
+        .from('api_keys')
+        .delete()
+        .eq('id', keyId);
+
+      if (error) throw error;
+
       setApiKeys(apiKeys.filter(key => key.id !== keyId));
       toast.success('API key deleted successfully');
     } catch (error) {
       toast.error('Failed to delete API key');
+      console.error(error);
     } finally {
       setLoading(false);
     }
