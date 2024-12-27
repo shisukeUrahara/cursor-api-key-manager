@@ -23,8 +23,8 @@ A Next.js application that provides a secure dashboard for managing API keys. Us
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/shisukeUrahara/api-key-management.git
-   cd api-key-management
+   git clone https://github.com/shisukeUrahara/cursor-api-key-manager.git
+   cd cursor-api-key-manager
    ```
 
 2. Install dependencies:
