@@ -78,7 +78,7 @@ export default function Dashboard() {
   const generateApiKey = () => {
     // Generate a key of consistent length (23 characters)
     const randomStr = Math.random().toString(36).substring(2, 12); // 10 chars
-    return `shke${randomStr}${Date.now().toString(36).slice(-9)}`; // tvly + 10 chars + 9 chars = 23 total
+    return `shke${randomStr}${Date.now().toString(36).slice(-9)}`; // shke + 10 chars + 9 chars = 23 total
   };
 
   const createApiKey = async () => {
@@ -92,11 +92,12 @@ export default function Dashboard() {
       if (!user) throw new Error('Not authenticated');
 
       const generatedKey = generateApiKey();
+      const maskedKey = `${generatedKey.slice(0, 4)}${'*'.repeat(19)}`; // Show first 4 chars + 19 asterisks
       
       const newKey = {
         name: newKeyName,
         key: generatedKey,
-        display_key: 'shke********************',
+        display_key: maskedKey,
         "limit": keyLimit,
         user_id: user.id
       };
@@ -111,7 +112,7 @@ export default function Dashboard() {
 
       setApiKeys([data, ...apiKeys]);
       setNewlyCreatedKey(data.key);
-      setVisibleKeys(prev => new Set([...prev, data.id]));
+      setVisibleKeys(new Set()); // Start with all keys hidden
       setShowNewKey(true);
       setNewKeyName('');
       setIsModalOpen(false);
