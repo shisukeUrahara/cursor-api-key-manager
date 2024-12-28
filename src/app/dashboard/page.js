@@ -63,7 +63,10 @@ export default function Dashboard() {
       const { data, error } = await supabase
         .from('api_keys')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
+
+      console.log("**@ fetching api keys data", data);
 
       if (error) throw error;
       setApiKeys(data);
