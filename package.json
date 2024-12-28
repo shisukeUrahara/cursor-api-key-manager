@@ -10,11 +10,19 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
+    "@langchain/community": "^0.3.20",
+    "@langchain/core": "^0.3.26",
+    "@langchain/openai": "^0.3.16",
     "@supabase/supabase-js": "^2.47.10",
+    "langchain": "^0.3.8",
     "next": "15.0.2",
     "react": "19.0.0-rc-02c0e824-20241028",
     "react-dom": "19.0.0-rc-02c0e824-20241028",
-    "sonner": "^1.7.0"
+    "sonner": "^1.7.0",
+    "typescript": "^5.7.2"
+  },
+  "resolutions": {
+    "@langchain/core": "^0.3.26"
   },
   "devDependencies": {
     "eslint": "^8",
