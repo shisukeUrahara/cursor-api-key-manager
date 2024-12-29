@@ -127,25 +127,35 @@ export default function Home() {
         </section>
 
         <section className="mt-16">
-        <footer className={`py-8 mt-auto ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-gray-900 text-white'}`}>
-        <div className="container mx-auto text-center">
-          <p className="mb-4">© 2024 Dandi Github Analyzer. All rights reserved.</p>
-          <div className="flex justify-center gap-4 mb-4">
-            <a href="#" className="hover:underline">Terms of Service</a>
-            <a href="#" className="hover:underline">Privacy</a>
-            <a href="#" className="hover:underline">Contact Us</a>
-          </div>
-          <div>
-            <p className="mb-2">Follow us on:</p>
-            <div className="flex justify-center gap-4">
-              <a href="#" className="hover:underline">Twitter</a>
-              <a href="#" className="hover:underline">LinkedIn</a>
-              <a href="#" className="hover:underline">GitHub</a>
+          <footer className={`py-12 mt-auto border-t ${theme === 'dark' ? 'bg-gray-800 text-gray-100 border-gray-700' : 'bg-gray-50 text-gray-600 border-gray-200'}`}>
+            <div className="container mx-auto px-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="text-center md:text-left">
+                  <h3 className="font-bold text-lg mb-4">About Us</h3>
+                  <p className="text-sm">Dandi Github Analyzer helps developers gain valuable insights from GitHub repositories through advanced analytics and AI-powered analysis.</p>
+                </div>
+                <div className="text-center">
+                  <h3 className="font-bold text-lg mb-4">Quick Links</h3>
+                  <div className="flex flex-col space-y-2">
+                    <a href="#" className="hover:text-blue-500 transition-colors">Terms of Service</a>
+                    <a href="#" className="hover:text-blue-500 transition-colors">Privacy Policy</a>
+                    <a href="#" className="hover:text-blue-500 transition-colors">Contact Us</a>
+                  </div>
+                </div>
+                <div className="text-center md:text-right">
+                  <h3 className="font-bold text-lg mb-4">Connect With Us</h3>
+                  <div className="flex justify-center md:justify-end space-x-4">
+                    <a href="#" className="hover:text-blue-500 transition-colors">Twitter</a>
+                    <a href="#" className="hover:text-blue-500 transition-colors">LinkedIn</a>
+                    <a href="#" className="hover:text-blue-500 transition-colors">GitHub</a>
+                  </div>
+                </div>
+              </div>
+              <div className="text-center mt-8 pt-8 border-t border-gray-700">
+                <p className="text-sm">© 2024 Dandi Github Analyzer. All rights reserved.</p>
+              </div>
             </div>
-          </div>
-        </div>
-      </footer>
-
+          </footer>
         </section>
       </main>
 
