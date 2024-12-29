@@ -20,6 +20,7 @@ export default function Home() {
             <a href="#" className="hover:underline">Features</a>
             <a href="#" className="hover:underline">Pricing</a>
             <a href="#" className="hover:underline">About</a>
+            <a href="/login" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Login</a>
             <button onClick={toggleTheme} className={`ml-4 p-2 rounded-full ${theme === 'dark' ? 'text-yellow-400' : 'text-gray-600'}`}>
               {theme === 'dark' ? <FaSun /> : <FaMoon />}
             </button>
