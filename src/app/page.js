@@ -105,7 +105,7 @@ export default function Home() {
             <div className={`p-4 rounded shadow w-full lg:w-1/2 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border border-gray-200'}`}>
               <h3 className="font-bold">API Request</h3>
               <p>Edit the payload and send a request</p>
-              <pre className={`p-2 rounded ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-100 text-black'}`}>
+              <pre className={`p-2 rounded overflow-x-auto whitespace-pre-wrap break-words ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-100 text-black'}`}>
                 {`{
   "githubUrl": "https://github.com/assafelovic/gpt-researcher"
 }`}
@@ -115,7 +115,7 @@ export default function Home() {
             <div className={`p-4 rounded shadow w-full lg:w-1/2 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border border-gray-200'}`}>
               <h3 className="font-bold">API Response</h3>
               <p>View the response from the API</p>
-              <pre className={`p-2 rounded overflow-auto ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-100 text-black'}`}>
+              <pre className={`p-2 rounded overflow-x-auto whitespace-pre-wrap break-words max-h-[200px] overflow-y-auto ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-100 text-black'}`}>
                 {`{
   "summary": "GPT Researcher is an autonomous agent designed for comprehensive online research on various tasks. It aims to provide detailed, factual, and unbiased research reports by leveraging AI technology. The project addresses issues of misinformation, speed, determinism, and reliability in research tasks.",
   "cool_facts": [
