@@ -133,7 +133,7 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="text-center md:text-left">
                   <h3 className="font-bold text-lg mb-4">About Us</h3>
-                  <p className="text-sm">Dandi Github Analyzer helps developers gain valuable insights from GitHub repositories through advanced analytics and AI-powered analysis.</p>
+                  <p className="text-sm">Shisuke Github Analyzer helps developers gain valuable insights from GitHub repositories through advanced analytics and AI-powered analysis.</p>
                 </div>
                 <div className="text-center">
                   <h3 className="font-bold text-lg mb-4">Quick Links</h3>
@@ -153,7 +153,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="text-center mt-8 pt-8 border-t border-gray-700">
-                <p className="text-sm">© 2024 Dandi Github Analyzer. All rights reserved.</p>
+                <p className="text-sm">© 2024 Shisuke Github Analyzer. All rights reserved.</p>
               </div>
             </div>
           </footer>
