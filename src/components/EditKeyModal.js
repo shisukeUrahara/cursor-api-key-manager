@@ -14,10 +14,10 @@ export default function EditKeyModal({
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50`}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className={`${
         theme === 'dark' ? 'bg-[#1A1A1A] text-white' : 'bg-white text-gray-900'
-      } rounded-lg p-6 w-[400px]`}>
+      } rounded-lg p-4 md:p-6 w-full max-w-md`}>
         <h2 className="text-xl font-semibold mb-4">Edit API key</h2>
         <p className="text-sm mb-4">Enter a new limit for the API key.</p>
         

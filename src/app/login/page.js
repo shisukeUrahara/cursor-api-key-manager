@@ -46,10 +46,10 @@ export default function Login() {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center transition-colors duration-200 ${
+    <div className={`min-h-screen flex items-center justify-center p-4 transition-colors duration-200 ${
       theme === 'dark' ? 'bg-[#111111] text-gray-100' : 'bg-gray-50 text-gray-900'
     }`}>
-      <div className={`max-w-md w-full space-y-8 p-8 rounded-lg ${
+      <div className={`w-full max-w-md space-y-8 p-4 md:p-8 rounded-lg ${
         theme === 'dark' ? 'bg-[#1A1A1A] border border-gray-800' : 'bg-white shadow-sm border border-gray-200'
       }`}>
         <div className="flex justify-between items-center">
