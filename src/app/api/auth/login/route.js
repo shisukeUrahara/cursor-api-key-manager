@@ -7,7 +7,8 @@ export async function POST(req) {
   try {
     const { email, password } = await req.json();
 
-    const { data: { user }, error } = await supabase.auth.signInWithPassword({
+    // Sign in with Supabase
+    const { data: { session }, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -17,15 +18,17 @@ export async function POST(req) {
       throw error;
     }
 
-    if (!user) {
+    if (!session?.user) {
       throw new Error('Authentication failed');
     }
 
-    const token = await new SignJWT({ userId: user.id })
+    // Create JWT token
+    const token = await new SignJWT({ userId: session.user.id })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('24h')
       .sign(new TextEncoder().encode(process.env.JWT_SECRET));
 
+    // Set JWT cookie
     const cookieStore = cookies();
     cookieStore.set('jwt', token, {
       httpOnly: true,

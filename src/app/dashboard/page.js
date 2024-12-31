@@ -129,17 +129,21 @@ export default function Dashboard() {
 
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('api_keys')
-        .update({ 
+      const response = await fetch('/api/keys', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: keyId,
           name: editKeyData.name,
-          "limit": editKeyData.limit
-        })
-        .eq('id', keyId)
-        .select()
-        .single();
+          limit: editKeyData.limit
+        }),
+      });
 
-      if (error) throw error;
+      const { data, message } = await response.json();
+      
+      if (!response.ok) throw new Error(message);
 
       setApiKeys(apiKeys.map(key => 
         key.id === keyId ? data : key
@@ -162,12 +166,14 @@ export default function Dashboard() {
 
     try {
       setLoading(true);
-      const { error } = await supabase
-        .from('api_keys')
-        .delete()
-        .eq('id', keyId);
+      const response = await fetch(`/api/keys?id=${keyId}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const { message } = await response.json();
+        throw new Error(message);
+      }
 
       setApiKeys(apiKeys.filter(key => key.id !== keyId));
       toast.success('API key deleted successfully');
