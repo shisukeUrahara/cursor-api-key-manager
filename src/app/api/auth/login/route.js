@@ -12,16 +12,22 @@ export async function POST(req) {
       password,
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase auth error:', error);
+      throw error;
+    }
 
-    // Create JWT token
+    if (!user) {
+      throw new Error('Authentication failed');
+    }
+
     const token = await new SignJWT({ userId: user.id })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('24h')
       .sign(new TextEncoder().encode(process.env.JWT_SECRET));
 
-    // Set JWT in cookie
-    cookies().set('jwt', token, {
+    const cookieStore = cookies();
+    cookieStore.set('jwt', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
@@ -30,8 +36,9 @@ export async function POST(req) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error('Login error:', error);
     return NextResponse.json(
-      { message: error.message },
+      { message: error.message || 'Authentication failed' },
       { status: 401 }
     );
   }

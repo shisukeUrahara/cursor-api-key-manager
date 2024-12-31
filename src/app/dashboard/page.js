@@ -51,9 +51,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) {
-      window.location.href = '/login';
+      router.push('/login');
     }
-  }, [user]);
+  }, [user, router]);
 
   useEffect(() => {
     fetchApiKeys();

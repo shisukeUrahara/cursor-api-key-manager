@@ -36,7 +36,10 @@ export default function Login() {
         
         if (!response.ok) throw new Error(data.message);
         
-        router.push('/dashboard');
+        // Add a small delay before redirect to ensure cookie is set
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 100);
       } else {
         // Register
         const response = await fetch('/api/auth/register', {
