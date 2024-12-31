@@ -9,6 +9,7 @@ import ApiKeysList from '@/components/ApiKeysList';
 import UsageCard from '@/components/UsageCard';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 
 const DUMMY_KEYS = [
@@ -46,6 +47,7 @@ export default function Dashboard() {
   const [editKeyData, setEditKeyData] = useState(null);
   const [canEditUsage, setCanEditUsage] = useState(false);
   const { user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (!user) {
@@ -60,15 +62,11 @@ export default function Dashboard() {
   const fetchApiKeys = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('api_keys')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      console.log("**@ fetching api keys data", data);
-
-      if (error) throw error;
+      const response = await fetch('/api/keys');
+      const { data, message } = await response.json();
+      
+      if (!response.ok) throw new Error(message);
+      
       setApiKeys(data);
     } catch (error) {
       toast.error('Failed to fetch API keys');
@@ -92,30 +90,25 @@ export default function Dashboard() {
 
     try {
       setLoading(true);
-      if (!user) throw new Error('Not authenticated');
-
-      const generatedKey = generateApiKey();
-      const maskedKey = `${generatedKey.slice(0, 4)}${'*'.repeat(19)}`; // Show first 4 chars + 19 asterisks
       
-      const newKey = {
-        name: newKeyName,
-        key: generatedKey,
-        display_key: maskedKey,
-        "limit": keyLimit,
-        user_id: user.id
-      };
+      const response = await fetch('/api/keys', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: newKeyName,
+          limit: keyLimit
+        }),
+      });
 
-      const { data, error } = await supabase
-        .from('api_keys')
-        .insert([newKey])
-        .select()
-        .single();
-
-      if (error) throw error;
+      const { data, message } = await response.json();
+      
+      if (!response.ok) throw new Error(message);
 
       setApiKeys([data, ...apiKeys]);
       setNewlyCreatedKey(data.key);
-      setVisibleKeys(new Set()); // Start with all keys hidden
+      setVisibleKeys(new Set());
       setShowNewKey(true);
       setNewKeyName('');
       setIsModalOpen(false);
@@ -205,9 +198,13 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      window.location.href = '/login';
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST'
+      });
+      
+      if (!response.ok) throw new Error('Failed to logout');
+      
+      router.push('/login');
     } catch (error) {
       toast.error('Error logging out');
       console.error(error);

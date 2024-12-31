@@ -6,8 +6,10 @@ import { useTheme } from '@/context/ThemeContext';
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
 import Image from "next/image";
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,22 +24,37 @@ export default function Login() {
       
       if (isLogin) {
         // Login
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
         });
-        if (error) throw error;
-        window.location.href = '/dashboard';
+
+        const data = await response.json();
+        
+        if (!response.ok) throw new Error(data.message);
+        
+        router.push('/dashboard');
       } else {
         // Register
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
+          body: JSON.stringify({ 
+            email, 
+            password,
+            redirectTo: `${window.location.origin}/auth/callback`
+          }),
         });
-        if (error) throw error;
+
+        const data = await response.json();
+        
+        if (!response.ok) throw new Error(data.message);
+        
         toast.success('Registration successful! Please check your email to verify your account.');
       }
     } catch (error) {
