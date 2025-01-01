@@ -4,9 +4,12 @@ import { useTheme } from "@/context/ThemeContext";
 import Image from "next/image";
 import { useState } from "react";
 import { FaSun, FaMoon } from "react-icons/fa";
+import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
+  const { user } = useAuth();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -38,7 +41,21 @@ export default function Home() {
             <a href="#" className="hover:underline">Features</a>
             <a href="#" className="hover:underline">Pricing</a>
             <a href="#" className="hover:underline">About</a>
-            <a href="/login" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Login</a>
+            {user ? (
+              <Link 
+                href="/dashboard" 
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link 
+                href="/login" 
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Login
+              </Link>
+            )}
             <button onClick={toggleTheme} className={`ml-4 p-2 rounded-full ${theme === 'dark' ? 'text-yellow-400' : 'text-gray-600'}`}>
               {theme === 'dark' ? <FaSun /> : <FaMoon />}
             </button>
@@ -51,7 +68,21 @@ export default function Home() {
             <a href="#" className="py-2 hover:underline">Features</a>
             <a href="#" className="py-2 hover:underline">Pricing</a>
             <a href="#" className="py-2 hover:underline">About</a>
-            <a href="/login" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-center">Login</a>
+            {user ? (
+              <Link 
+                href="/dashboard" 
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-center"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link 
+                href="/login" 
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-center"
+              >
+                Login
+              </Link>
+            )}
             <button 
               onClick={toggleTheme} 
               className={`mt-2 p-2 rounded-full flex items-center justify-center ${theme === 'dark' ? 'text-yellow-400' : 'text-gray-600'}`}
