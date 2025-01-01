@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { supabase } from '@/lib/supabase';
 
 export async function POST() {
@@ -8,10 +7,13 @@ export async function POST() {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
 
+    // Create response
+    const response = NextResponse.json({ success: true });
+    
     // Clear JWT cookie
-    cookies().delete('jwt');
+    response.cookies.delete('jwt');
 
-    return NextResponse.json({ success: true });
+    return response;
   } catch (error) {
     return NextResponse.json(
       { message: error.message },

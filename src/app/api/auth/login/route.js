@@ -28,16 +28,18 @@ export async function POST(req) {
       .setExpirationTime('24h')
       .sign(new TextEncoder().encode(process.env.JWT_SECRET));
 
-    // Set JWT cookie
-    const cookieStore = cookies();
-    cookieStore.set('jwt', token, {
+    // Create response with success status
+    const response = NextResponse.json({ success: true });
+
+    // Set cookie in the response
+    response.cookies.set('jwt', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 60 * 60 * 24, // 24 hours
     });
 
-    return NextResponse.json({ success: true });
+    return response;
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(
